@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { User } from '../classes/user';
-import { GLOBAL_COMPONENT_STATE } from '../globals/global-component-state';
 import { Subscription } from 'rxjs';
+import { AppStateService } from '../services/app-state.service';
 
 @Component({
   selector: 'app-test2',
@@ -10,13 +10,22 @@ import { Subscription } from 'rxjs';
 })
 export class Test2Component implements OnInit, OnDestroy {
   private subs: Subscription[] = [];
+
+  // Localized instance of the global user
   user: User;
 
+  // Inject the service as a dependency
+  constructor(
+    private state: AppStateService
+  ) {
+    // Localize the instance
+    this.user = new User(this.state.user);
 
-  constructor() {
-    this.user = new User(GLOBAL_COMPONENT_STATE.user);
-    this.subs.push(GLOBAL_COMPONENT_STATE.onUserChanges.subscribe(
+    // Add the subscriber to our subscriptions
+    this.subs.push(this.state.onUserChanges.subscribe(
       user => {
+
+        // on changes, assign the User to our localized user
         console.log(user);
         this.user = new User(user);
       }
@@ -24,7 +33,7 @@ export class Test2Component implements OnInit, OnDestroy {
   }
 
   update() {
-    GLOBAL_COMPONENT_STATE.user = this.user;
+    this.state.user = this.user;
   }
 
   ngOnInit() {

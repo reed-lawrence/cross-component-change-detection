@@ -1,11 +1,19 @@
-import { User, IUser } from '../classes/user-deep'
+import { Injectable } from '@angular/core';
+import { IUser, User } from '../classes/user-deep';
 import { Subject, Subscription } from 'rxjs';
 
-export interface IGlobalComponentState {
+export interface IAppStateService {
   user: IUser;
+  onUserChanges: Subject<IUser>;
 }
 
-export class GlobalComponentState implements IGlobalComponentState {
+@Injectable({
+  providedIn: 'root'
+})
+export class AppStateService implements IAppStateService {
+
+  constructor() { }
+
   private _user: User = new User();
   private _userSub: Subscription;
 
@@ -28,14 +36,4 @@ export class GlobalComponentState implements IGlobalComponentState {
 
     this.onUserChanges.next(this._user);
   }
-
-  constructor(init?: Partial<IGlobalComponentState>) {
-    if (init) {
-      if (init.user) { this.user = new User(init.user); }
-    }
-  }
 }
-
-export const GLOBAL_COMPONENT_STATE = new GlobalComponentState();
-
-

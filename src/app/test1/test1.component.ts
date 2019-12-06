@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../classes/user';
-import { GLOBAL_COMPONENT_STATE } from '../globals/global-component-state';
 import { Subscription } from 'rxjs';
+import { AppStateService } from '../services/app-state.service';
 
 @Component({
   selector: 'app-test1',
@@ -12,19 +12,19 @@ export class Test1Component implements OnInit {
   private subs: Subscription[] = [];
   user: User;
 
-
-  constructor() {
-    this.user = new User(GLOBAL_COMPONENT_STATE.user);
-    this.subs.push(GLOBAL_COMPONENT_STATE.onUserChanges.subscribe(
+  constructor(
+    private state: AppStateService
+  ) {
+    this.user = new User(this.state.user);
+    this.subs.push(this.state.onUserChanges.subscribe(
       user => {
-        console.log(user);
         this.user = new User(user);
       }
     ));
   }
 
   update() {
-    GLOBAL_COMPONENT_STATE.user = this.user;
+    this.state.user = this.user;
   }
 
   ngOnInit() {
